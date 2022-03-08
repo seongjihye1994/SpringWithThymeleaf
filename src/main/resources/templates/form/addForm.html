@@ -19,7 +19,7 @@
     </div>
 
     <form action="item.html" th:action th:object="${item}" method="post">
-        <!-- 컨트롤러에서 넘긴 item 객체 th:object로 받아옴 -->
+        <!-- 컨트롤러에서 넘긴 빈 item 객체 th:object로 받아옴 -->
         <div>
             <label for="itemName">상품명</label>
             <input type="text" id="itemName" th:field="*{itemName}" class="form-control" placeholder="이름을 입력하세요">
@@ -35,6 +35,57 @@
         <div>
             <label for="quantity">수량</label>
             <input type="text" id="quantity" th:field="*{quantity}" class="form-control" placeholder="수량을 입력하세요">
+        </div>
+
+        <hr class="my-4">
+
+        <!-- single checkbox -->
+        <div>판매 여부</div>
+        <div>
+            <div class="form-check">
+                <input type="checkbox" id="open" th:field="*{open}" class="form-check-input">
+                <label for="open" class="form-check-label">판매 오픈</label>
+            </div>
+        </div>
+
+        <!-- multi checkbox -->
+        <div>
+            <div>등록 지역</div>
+            <div th:each="region : ${regions}" class="form-check form-check-inline">
+                <input type="checkbox" th:field="*{regions}" th:value="${region.key}" class="form-check-input">
+                <!-- th:field="*{regions}" 는 th:object="${item}" 에 있는 regions 임. -->
+
+                <label th:for="${#ids.prev('regions')}"
+                       th:text="${region.value}" class="form-check-label">서울</label>
+                <!-- th:field="*{regions}" 를 사용하면 id와 name 을 타임리프가 자동으로 생성 해 준다고 했다.
+                    근대, 루프를 돌면서 생성될 때는 regions1 regions2 regions3 .. 이런식으로 생성해준다.
+                    (id는 유일해야 하기 때문에 foreach 문에 리터럴하게 넣어 쓸 수 없다.)
+                    그래서 동적으로 id를 생성해서 사용할 때는,
+                    label for 에도 input 의 id 값과 동일하게 일치시켜 줘야 하기 때문에 #ids.prev() 를 사용해야 한다.
+                    #ids.prev()를 사용하면 th:field="*{regions}" 에서 자동으로 생성된 id 값을 찾아 label for 에도 대입시켜준다. -->
+            </div>
+        </div>
+
+        <!-- radio button -->
+        <div>
+            <div>상품 종류</div>
+            <div th:each="type : ${itemTypes}" class="form-check form-check-inline">
+                <input type="radio" th:field="*{itemType}" th:value="${type.name()}"
+                       class="form-check-input">
+                <label th:for="${#ids.prev('itemType')}" th:text="${type.description}" class="form-check-label">
+                    BOOK
+                </label>
+            </div>
+        </div>
+
+        <!-- SELECT -->
+        <div>
+            <div>배송 방식</div>
+            <select th:field="*{deliveryCode}" class="form-select">
+                <option value="">==배송 방식 선택==</option>
+                <option th:each="deliveryCode : ${deliveryCodes}" th:value="${deliveryCode.code}"
+                        th:text="${deliveryCode.displayName}">FAST</option>
+            </select>
         </div>
 
         <hr class="my-4">
